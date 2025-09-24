@@ -1,0 +1,8 @@
+# Dependências do projeto
+PyGObject==3.48.2  # GUI primária para Linux (Gtk, integração com Nautilus)
+PyQt5==5.15.11    # Fallback para cross-platform (se PyGObject falhar)
+pycairo==1.26.1    # Dependência explícita para PyGObject
+pytest==8.3.2      # Para testes futuros
+flake8==7.1.1      # Linting
+pylint==3.3.1      # Linting
+safety==3.2.0      # Scans de vulnerabilidades
