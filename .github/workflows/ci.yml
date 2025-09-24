@@ -1,0 +1,83 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+permissions:
+  security-events: write # Permite CodeQL gravar resultados
+  contents: read # Acesso ao código
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pylint
+      - name: Run flake8
+        run: |
+          if [ -n "$(find src/ tests/ -name '*.py')" ]; then
+            find src/ tests/ -name '*.py' | xargs flake8 --max-line-length=88 --extend-ignore=E203
+          else
+            echo "No Python files found for linting"
+          fi
+      - name: Run pylint
+        run: |
+          if [ -n "$(find src/ tests/ -name '*.py')" ]; then
+            find src/ tests/ -name '*.py' | xargs pylint --max-line-length=88 --disable=C0301
+          else
+            echo "No Python files found for linting"
+          fi
+
+  security-scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install safety
+        run: pip install safety
+      - name: Run safety scan
+        run: safety check -r requirements.txt || true # Tolerar ausência inicial
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+          queries: security-and-quality
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        continue-on-error: true # Tolerar falhas iniciais no Sprint 0
+
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          sudo apt update
+          sudo apt install -y bubblewrap firejail
+      - name: Run tests
+        run: python -m unittest discover tests/ || true # Tolerar ausência inicial

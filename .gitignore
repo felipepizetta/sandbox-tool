@@ -1,0 +1,62 @@
+# Arquivos e diretórios a serem ignorados pelo Git
+
+# Ambientes virtuais
+venv/
+.env/
+env/
+
+# Arquivos de build e cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Arquivos de segredos e configurações sensíveis
+*.key
+*.pem
+*.env
+*.ini
+secrets/
+credentials/
+
+# Arquivos temporários e de log
+*.log
+*.log.*
+*.tmp
+temp/
+
+# Arquivos de IDE/Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Testes e cobertura
+.coverage
+coverage/
+htmlcov/
+
+# Documentação gerada
+docs/_build/
+
+# Arquivos de dados locais
+data/
+*.db
+*.sqlite3
+
+# Arquivos de teste locais
+test_output/
+*.test
+
+# Outros
+*.bak
+*.backup
